@@ -1,0 +1,43 @@
+#include <stdlib.h>
+#include <stdio.h>
+#include "../jpgbmpswap/jjpglib.h"
+#include "./fGetFileInfo/fGetFileInfo.h"
+#include "./saveBmp/saveBmp.h"
+
+int main()
+{
+    unsigned char *pJpgBuf = NULL;
+	unsigned char *pBmpBuf = NULL;
+	long w=0,h=0,bitCount=0,ret;
+
+	//¶ÁjpgÍ¼Ïñ
+	int nJpgSize = fReadDiskFile("E:\\01.jpg",0, &pJpgBuf);
+	if(nJpgSize > 0)
+	{
+		
+        ret = jJpgToBmp(pJpgBuf,nJpgSize,&pBmpBuf,&w,&h,&bitCount);
+		if(ret == 0)
+		{
+            ret = lCreateBMPHeader("E:\\05.bmp",w,h,(short)bitCount,300);
+			if(ret == 0)
+			{
+				ret = lWriteBMPFile(pBmpBuf,w*h*bitCount/8);
+				if(ret == 0)
+					printf("Ð´BMPÍ¼Ïñ³É¹¦\n");
+                else
+                    printf("Ð´BMPÍ¼ÏñÊ§°Ü¡£ ret=%d\n",ret);
+
+			}
+			lReleaseBMP();
+
+		}
+		JFreeBmpBuf(pBmpBuf);
+	}
+	fFreeReadDiskFile(pJpgBuf);
+
+
+    
+
+
+	return 0;
+}
